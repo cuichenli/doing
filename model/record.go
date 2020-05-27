@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // RecordStatus Status of one record
 type RecordStatus int
@@ -18,4 +21,11 @@ type Record struct {
 	Detail      string
 	CreatedTime time.Time
 }
+
+func (record *Record) toTaskPaper() string {
+	result := fmt.Sprintf("  - %s@created(%s)", record.Detail, record.CreatedTime)
+	if record.Status == Done {
+		result += "@done"
+	}
+	return result
 }
