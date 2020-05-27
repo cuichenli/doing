@@ -14,7 +14,8 @@ const (
 
 // Record A record of doing things.
 type Record struct {
-	status      RecordStatus
-	detail      string
-	createdTime time.Time
+	Status      RecordStatus
+	Detail      string
+	CreatedTime time.Time
+}
 }
