@@ -22,8 +22,10 @@ type Record struct {
 	CreatedTime time.Time
 }
 
-func (record *Record) toTaskPaper() string {
-	result := fmt.Sprintf("  - %s@created(%s)", record.Detail, record.CreatedTime)
+// ToTaskPaper Convert the record to a string that is compatible to
+// task paper syntax.
+func (record *Record) ToTaskPaper() string {
+	result := fmt.Sprintf("  - %s @created(%s)", record.Detail, record.CreatedTime.Format(time.RFC3339))
 	if record.Status == Done {
 		result += "@done"
 	}
