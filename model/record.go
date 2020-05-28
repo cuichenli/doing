@@ -27,7 +27,12 @@ type Record struct {
 func (record *Record) ToTaskPaper() string {
 	result := fmt.Sprintf("  - %s @created(%s)", record.Detail, record.CreatedTime.Format(time.RFC3339))
 	if record.Status == Done {
-		result += "@done"
+		result += " @done"
 	}
 	return result
+}
+
+// Done Mark a record is done.
+func (record *Record) Done() {
+	record.Status = Done
 }

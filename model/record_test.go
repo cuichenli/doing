@@ -25,4 +25,10 @@ var _ = Describe("Record", func() {
 		result := record.ToTaskPaper()
 		Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z)"))
 	})
+
+	It("Convert a done record to task paper string", func() {
+		record.Done()
+		result := record.ToTaskPaper()
+		Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done"))
+	})
 })
