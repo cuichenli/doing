@@ -17,37 +17,42 @@ func (recordId RecordID) GetHashValue() int {
 	return recordId.ID
 }
 
+// InitializeRecordID Create a new recordID.
+func InitializeRecordID() RecordID {
+	return RecordID{ID: 0}
+}
+
 // RecordList A list of doing records.
 type RecordList struct {
-	doneRecords  map[int]Record
-	doingRecords map[int]Record
-	nextID       RecordID
+	DoneRecords  map[int]Record
+	DoingRecords map[int]Record
+	NextID       RecordID
 }
 
 // NewRecordList Create a new RecordList instance.
 func NewRecordList() RecordList {
 	return RecordList{
-		doneRecords:  make(map[int]Record),
-		doingRecords: make(map[int]Record),
-		nextID:       RecordID{ID: 0},
+		DoneRecords:  make(map[int]Record),
+		DoingRecords: make(map[int]Record),
+		NextID:       InitializeRecordID(),
 	}
 }
 
 // AddRecord Add one record to the record list.
 func (recordList *RecordList) AddRecord(record Record) {
-	recordList.doingRecords[recordList.nextID.GetHashValue()] = record
-	recordList.nextID = recordList.nextID.GetNextID()
+	recordList.DoingRecords[recordList.NextID.GetHashValue()] = record
+	recordList.NextID = recordList.NextID.GetNextID()
 }
 
 // MarkItemDone Mark one item is done.
 func (recordList *RecordList) MarkItemDone(recordID RecordID) (*Record, error) {
 	hashKey := recordID.GetHashValue()
-	targetRecord, ok := recordList.doingRecords[hashKey]
+	targetRecord, ok := recordList.DoingRecords[hashKey]
 	if !ok {
 		return nil, errors.New("The provided record ID is not found in doing record list")
 	}
 	targetRecord.Done()
-	recordList.doneRecords[hashKey] = targetRecord
-	delete(recordList.doingRecords, hashKey)
+	recordList.DoneRecords[hashKey] = targetRecord
+	delete(recordList.DoingRecords, hashKey)
 	return &targetRecord, nil
 }
