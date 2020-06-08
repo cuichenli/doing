@@ -17,4 +17,8 @@ type RecordList struct {
 	nextID       RecordID
 }
 
+// AddRecord Add one record to the record list.
+func (recordList *RecordList) AddRecord(record Record) {
+	recordList.doingRecords[recordList.nextID] = record
+	recordList.nextID = recordList.nextID.GetNextID()
 }
