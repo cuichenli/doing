@@ -24,6 +24,15 @@ type RecordList struct {
 	nextID       RecordID
 }
 
+// NewRecordList Create a new RecordList instance.
+func NewRecordList() RecordList {
+	return RecordList{
+		doneRecords:  make(map[int]Record),
+		doingRecords: make(map[int]Record),
+		nextID:       RecordID{ID: 0},
+	}
+}
+
 // AddRecord Add one record to the record list.
 func (recordList *RecordList) AddRecord(record Record) {
 	recordList.doingRecords[recordList.nextID.GetHashValue()] = record
