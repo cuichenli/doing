@@ -1,6 +1,8 @@
 package model
 
-import "errors"
+import (
+	"fmt"
+)
 
 // RecordID Data structure represents the Id for one record
 type RecordID struct {
@@ -49,7 +51,7 @@ func (recordList *RecordList) MarkItemDone(recordID RecordID) (*Record, error) {
 	hashKey := recordID.GetHashValue()
 	targetRecord, ok := recordList.DoingRecords[hashKey]
 	if !ok {
-		return nil, errors.New("The provided record ID is not found in doing record list")
+		return nil, fmt.Errorf("The provided record ID %d is not found in doing record list", recordID.ID)
 	}
 	targetRecord.Done()
 	recordList.DoneRecords[hashKey] = targetRecord

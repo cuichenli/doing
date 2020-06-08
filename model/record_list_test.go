@@ -65,7 +65,8 @@ var _ = Describe("RecordList", func() {
 		})
 
 		It("Mark one record as finished ", func() {
-			recordList.MarkItemDone(model.RecordID{ID: 0})
+			record, _ := recordList.MarkItemDone(model.RecordID{ID: 0})
+			Expect(record.Detail).To(Equal(finished))
 			doingKeys := make([]int, 0)
 			for k := range recordList.DoingRecords {
 				doingKeys = append(doingKeys, k)
@@ -79,8 +80,10 @@ var _ = Describe("RecordList", func() {
 		})
 
 		It("Mark two records as finished ", func() {
-			recordList.MarkItemDone(model.RecordID{ID: 0})
-			recordList.MarkItemDone(model.RecordID{ID: 3})
+			record, _ := recordList.MarkItemDone(model.RecordID{ID: 0})
+			Expect(record.Detail).To(Equal(finished))
+			record, _ = recordList.MarkItemDone(model.RecordID{ID: 3})
+			Expect(record.Detail).To(Equal(secondFinished))
 			doingKeys := make([]int, 0)
 			for k := range recordList.DoingRecords {
 				doingKeys = append(doingKeys, k)
@@ -94,6 +97,11 @@ var _ = Describe("RecordList", func() {
 			Expect(doingKeys).To(Equal([]int{1, 2}))
 		})
 
+		It("Mark one item not exist", func() {
+			_, err := recordList.MarkItemDone(model.RecordID{ID: 5})
+			Expect(err.Error()).To(Equal("The provided record ID 5 is not found in doing record list"))
+
+		})
 	})
 
 })
