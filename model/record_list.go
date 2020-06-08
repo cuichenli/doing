@@ -1,5 +1,7 @@
 package model
 
+import "errors"
+
 // RecordID Data structure represents the Id for one record
 type RecordID struct {
 	ID int
@@ -26,4 +28,17 @@ type RecordList struct {
 func (recordList *RecordList) AddRecord(record Record) {
 	recordList.doingRecords[recordList.nextID.GetHashValue()] = record
 	recordList.nextID = recordList.nextID.GetNextID()
+}
+
+// MarkItemDone Mark one item is done.
+func (recordList *RecordList) MarkItemDone(recordID RecordID) (*Record, error) {
+	hashKey := recordID.GetHashValue()
+	targetRecord, ok := recordList.doingRecords[hashKey]
+	if !ok {
+		return nil, errors.New("The provided record ID is not found in doing record list")
+	}
+	targetRecord.Done()
+	recordList.doneRecords[hashKey] = targetRecord
+	delete(recordList.doingRecords, hashKey)
+	return &targetRecord, nil
 }
