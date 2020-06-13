@@ -104,4 +104,26 @@ var _ = Describe("RecordList", func() {
 		})
 	})
 
+	Context("RecordList.GetAllRecords", func() {
+		It("Should return all the records sorted", func() {
+			var (
+				first  = CreateDummyRecord("first")
+				second = CreateDummyRecord("second")
+				third  = CreateDummyRecord("third")
+			)
+			recordList := model.NewRecordList()
+			recordList.AddRecord(first)
+			recordList.AddRecord(second)
+			recordList.AddRecord(third)
+			recordList.MarkItemDone(model.RecordID{ID: 2})
+
+			third.Done()
+			result := recordList.GetAllRecords()
+			Expect(result[0]).To(Equal(first))
+			Expect(result[1]).To(Equal(second))
+			Expect(result[2]).To(Equal(third))
+			Expect(len(result)).To(Equal(3))
+		})
+	})
+
 })

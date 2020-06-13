@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"sort"
 )
 
 // RecordID Data structure represents the Id for one record
@@ -57,4 +58,25 @@ func (recordList *RecordList) MarkItemDone(recordID RecordID) (*Record, error) {
 	recordList.DoneRecords[hashKey] = targetRecord
 	delete(recordList.DoingRecords, hashKey)
 	return &targetRecord, nil
+}
+
+// GetAllRecords Get all the records stored in RecordList and sort them.
+func (recordList *RecordList) GetAllRecords() []Record {
+	newRecordsMap := make(map[int]Record)
+	ids := make([]int, 0)
+	for k, v := range recordList.DoingRecords {
+		newRecordsMap[k] = v
+		ids = append(ids, k)
+	}
+	for k, v := range recordList.DoneRecords {
+		newRecordsMap[k] = v
+		ids = append(ids, k)
+	}
+
+	sort.Ints(ids)
+	records := make([]Record, 0)
+	for _, id := range ids {
+		records = append(records, newRecordsMap[id])
+	}
+	return records
 }
