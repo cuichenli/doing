@@ -14,6 +14,7 @@ var BeforeEach = ginkgo.BeforeEach
 var It = ginkgo.It
 var Expect = gomega.Expect
 var Equal = gomega.Equal
+var BeNil = gomega.BeNil
 var Context = ginkgo.Context
 
 func TestModel(t *testing.T) {
