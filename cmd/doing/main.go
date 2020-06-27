@@ -1,10 +1,9 @@
 package main
 
-import "os"
+import (
+	"github.com/cuichenli/doing/commands"
+)
 
 func main() {
-	err := addDoing("daba")
-	if err != nil {
-		os.Exit(1)
-	}
+	commands.RootCmd.Execute()
 }
