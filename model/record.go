@@ -24,6 +24,24 @@ type Record struct {
 	CreatedTime time.Time
 }
 
+// NewDoingRecord Factory method for creating one new doing record.
+func NewDoingRecord(detail string) Record {
+	return Record{
+		Status:      Doing,
+		Detail:      detail,
+		CreatedTime: time.Now(),
+	}
+}
+
+// NewDoneRecord Factory method for creating one new done record.
+func NewDoneRecord(detail string) Record {
+	return Record{
+		Status:      Done,
+		Detail:      detail,
+		CreatedTime: time.Now(),
+	}
+}
+
 // ToTaskPaper Convert the record to a string that is compatible to
 // task paper syntax.
 func (record *Record) ToTaskPaper() string {
