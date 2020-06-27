@@ -1,6 +1,7 @@
 package model
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"strings"
@@ -27,7 +28,9 @@ func (writer RecordsWriter) WriteToFile(recordList RecordList) error {
 	for _, record := range records {
 		stringBuilder.WriteString(fmt.Sprintf("%s\n", record.ToTaskPaper()))
 	}
-	_, err := fmt.Fprintf(writer.Writer, stringBuilder.String())
+	w := bufio.NewWriter(writer.Writer)
+	_, err := w.WriteString(stringBuilder.String())
+	w.Flush()
 	if err != nil {
 		return fmt.Errorf("Failed to write to file %s: %s", writer.ConfigFile, err)
 	}
