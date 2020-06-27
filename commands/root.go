@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cuichenli/doing/model"
 	"github.com/spf13/cobra"
@@ -48,6 +49,7 @@ func GetRecordsFromFile(reader io.Reader) (model.RecordList, error) {
 	recordList := model.NewRecordList()
 	for scanner.Scan() {
 		text := scanner.Text()
+		text = strings.TrimLeft(text, " -")
 		record, _ := model.FromTaskPaper(text)
 		recordList.AddRecord(record)
 	}
