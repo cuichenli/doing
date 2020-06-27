@@ -3,3 +3,4 @@ build: bin/doing
 
 test:
 	go test ./model
+	go test ./commands
