@@ -62,7 +62,7 @@ func GetRecordsFromFile(reader io.Reader) (model.RecordList, error) {
 }
 
 // GetExistingRecords Get all existing records
-func GetExistingRecords() (model.RecordList, error) {
+var GetExistingRecords = func() (model.RecordList, error) {
 	file, err := os.OpenFile(configFile, os.O_RDONLY|os.O_CREATE, 0666)
 	defer file.Close()
 	if err != nil {

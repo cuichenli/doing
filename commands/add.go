@@ -14,6 +14,10 @@ var addCommand = &cobra.Command{
 	RunE:  Add,
 }
 
+var newDoingRecord = model.NewDoingRecord
+var openFile = os.OpenFile
+var newRecordsWriter = model.NewRecordsWriter
+
 // Add Function executed for add command.
 func Add(cmd *cobra.Command, args []string) error {
 	entry := args[0]
@@ -21,13 +25,13 @@ func Add(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	record := model.NewDoingRecord(entry)
+	record := newDoingRecord(entry)
 	records.AddRecord(record)
-	file, err := os.OpenFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
+	file, err := openFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
-	writer := model.NewRecordsWriter(configFile, file)
+	writer := newRecordsWriter(configFile, file)
 	writer.WriteToFile(records)
 	return nil
 }
