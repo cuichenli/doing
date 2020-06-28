@@ -46,6 +46,20 @@ var _ = Describe("RecordList", func() {
 			Expect(recordList.DoingRecords[1].Detail).To(Equal(detail2))
 			Expect(recordList.DoingRecords[1].Status).To(Equal(model.Doing))
 		})
+
+		It("Add one done record to the recordList", func() {
+			const detail1 = "One Task"
+			dummyRecord := CreateDummyRecord(detail1)
+			dummyRecord.Done()
+			dummyRecords = append(dummyRecords, dummyRecord)
+			for _, record := range dummyRecords {
+				recordList.AddRecord(record)
+			}
+
+			Expect(len(recordList.DoneRecords)).To(Equal(1))
+			Expect(recordList.DoneRecords[0].Detail).To(Equal(detail1))
+			Expect(recordList.DoneRecords[0].Status).To(Equal(model.Done))
+		})
 	})
 
 	Context("RecordList.MarkItemDone", func() {

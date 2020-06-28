@@ -43,7 +43,11 @@ func NewRecordList() RecordList {
 
 // AddRecord Add one record to the record list.
 func (recordList *RecordList) AddRecord(record Record) {
-	recordList.DoingRecords[recordList.NextID.GetHashValue()] = record
+	if record.Status == Doing {
+		recordList.DoingRecords[recordList.NextID.GetHashValue()] = record
+	} else {
+		recordList.DoneRecords[recordList.NextID.GetHashValue()] = record
+	}
 	recordList.NextID = recordList.NextID.GetNextID()
 }
 
