@@ -32,6 +32,6 @@ func Add(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	writer := newRecordsWriter(configFile, file)
-	writer.WriteToFile(records)
-	return nil
+	err = writer.WriteToFile(records)
+	return err
 }
