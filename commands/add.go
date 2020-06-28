@@ -8,30 +8,17 @@ import (
 )
 
 var addCommand = &cobra.Command{
-	Use:   "add [NOTE]",
-	Short: "Add a record",
-	Args:  cobra.ExactArgs(1),
-	RunE:  Add,
+	Use:     "add [NOTE]",
+	Short:   "Add a record",
+	Args:    cobra.ExactArgs(1),
+	RunE:    add,
+	Aliases: []string{"now", "did"},
 }
 
 var newDoingRecord = model.NewDoingRecord
 var openFile = os.OpenFile
 var newRecordsWriter = model.NewRecordsWriter
 
-// Add Function executed for add command.
-func Add(cmd *cobra.Command, args []string) error {
-	entry := args[0]
-	records, err := GetExistingRecords()
-	if err != nil {
-		return err
-	}
-	record := newDoingRecord(entry)
-	records.AddRecord(record)
-	file, err := openFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return err
-	}
-	writer := newRecordsWriter(configFile, file)
-	err = writer.WriteToFile(records)
-	return err
-}
+var add = GenericAdd(func(_ *model.Record) {
+	return
+})
