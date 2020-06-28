@@ -30,6 +30,7 @@ func init() {
 		os.Exit(1)
 	}
 	RootCmd.AddCommand(addCommand)
+	RootCmd.AddCommand(doneCommand)
 }
 
 // GetConfigFilePath Get configuration path based on home directory.
