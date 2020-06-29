@@ -12,6 +12,6 @@ var doneCommand = &cobra.Command{
 	RunE:  done,
 }
 
-var done = GenericAdd(func(record *model.Record) {
+var done = genericAdd(func(record *model.Record) {
 	record.Done()
 })
