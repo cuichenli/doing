@@ -31,21 +31,10 @@ func finish(cmd *cobra.Command, args []string) error {
 
 func finishLastItems(records *model.RecordList, count int) {
 	recordsList := records.GetAllRecords()
-	recordsNum := len(recordsList)
+	recordsNum := len(*recordsList)
 	for idx := recordsNum - 1; idx >= recordsNum-count; idx-- {
-		record, ok := records.DoingRecords[idx]
-		if !ok {
-			record, ok = records.DoneRecords[idx]
-			if !ok {
-				continue
-			}
-		}
+		record := &(*recordsList)[idx]
 		record.Done()
-		records.DoneRecords[idx] = record
-		_, ok = records.DoingRecords[idx]
-		if ok {
-			delete(records.DoingRecords, idx)
-		}
 	}
 	return
 }

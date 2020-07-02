@@ -25,7 +25,7 @@ func NewRecordsWriter(file string, writer io.Writer) RecordsWriter {
 func (writer RecordsWriter) WriteToFile(recordList RecordList) error {
 	records := recordList.GetAllRecords()
 	stringBuilder := strings.Builder{}
-	for _, record := range records {
+	for _, record := range *records {
 		stringBuilder.WriteString(fmt.Sprintf("%s\n", record.ToTaskPaper()))
 	}
 	w := bufio.NewWriter(writer.Writer)

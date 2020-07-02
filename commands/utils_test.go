@@ -151,8 +151,7 @@ func TestGetRecordsFromFile(t *testing.T) {
 	- a done record @created(2020-06-28T21:29:52+10:00) @done`)
 	records, err := getRecordsFromFile(&buf)
 	g.Expect(err).To(gomega.BeNil())
-	g.Expect(len(records.DoingRecords)).To(gomega.Equal(1))
-	g.Expect(len(records.DoneRecords)).To(gomega.Equal(1))
+	g.Expect(len(records.Records)).To(gomega.Equal(2))
 }
 
 func TestGetExistingRecords(t *testing.T) {
