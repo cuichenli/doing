@@ -30,14 +30,18 @@ func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) err
 		record := newDoingRecord(entry)
 		callback(&record)
 		records.AddRecord(record)
-		file, err := openFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			return err
-		}
-		writer := newRecordsWriter(configFile, file)
-		err = writer.WriteToFile(records)
+		return writeRecords(records)
+	}
+}
+
+func writeRecords(records model.RecordList) error {
+	file, err := openFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
 		return err
 	}
+	writer := newRecordsWriter(configFile, file)
+	err = writer.WriteToFile(records)
+	return err
 }
 
 // getConfigFilePath Get configuration path based on home directory.

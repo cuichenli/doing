@@ -25,4 +25,5 @@ func init() {
 	}
 	RootCmd.AddCommand(addCommand)
 	RootCmd.AddCommand(doneCommand)
+	RootCmd.AddCommand(finishCommand)
 }
