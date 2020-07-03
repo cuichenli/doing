@@ -92,4 +92,13 @@ var _ = Describe("Record", func() {
 			// Expect(record.Status).To(Equal(model.Doing))
 		})
 	})
+
+	Context("Record.ToDisplayString", func() {
+		It("Should create a string to be displayed", func() {
+			record := CreateDummyRecord("A record")
+			str := record.ToDisplayString()
+			Expect(str).To(Equal("| 2015-04-03 12:20 | A record"))
+		})
+
+	})
 })

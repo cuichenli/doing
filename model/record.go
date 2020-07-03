@@ -106,3 +106,9 @@ func FromTaskPaper(text string) (Record, error) {
 func (record *Record) Done() {
 	record.Status = Done
 }
+
+// ToDisplayString Conver one record to a string to be displayed.
+func (record *Record) ToDisplayString() string {
+	timeString := record.CreatedTime.Format("2006-01-02 15:04")
+	return fmt.Sprintf("| %s | %s", timeString, record.Detail)
+}
