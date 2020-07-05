@@ -36,9 +36,14 @@ func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) err
 
 func writeRecords(records model.RecordList) error {
 	file, err := openFile(configFile, os.O_WRONLY|os.O_CREATE, 0666)
+	defer func() {
+		file.Close()
+	}()
 	if err != nil {
 		return err
 	}
+	file.Truncate(0)
+	file.Seek(0, 0)
 	writer := newRecordsWriter(configFile, file)
 	err = writer.WriteToFile(records)
 	return err
