@@ -100,6 +100,7 @@ func (record *Record) AddTagFromRawStringList(text []string) error {
 	}
 	return nil
 }
+
 // RemoveTag Remove a tag from the tag name.
 func (record *Record) RemoveTag(name string) {
 	_, ok := record.Tag[name]

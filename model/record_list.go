@@ -21,3 +21,15 @@ func (recordList *RecordList) AddRecord(record Record) {
 func (recordList *RecordList) GetAllRecords() *[]Record {
 	return &recordList.Records
 }
+
+// EditRecords Edit the provided records based on the handler.
+func (recordList *RecordList) EditRecords(start int, end int, handler func(*Record) error) error {
+	records := recordList.GetAllRecords()
+	for i := start; i < end; i++ {
+		err := handler(&(*records)[i])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

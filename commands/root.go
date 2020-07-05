@@ -27,4 +27,5 @@ func init() {
 	RootCmd.AddCommand(doneCommand)
 	RootCmd.AddCommand(finishCommand)
 	RootCmd.AddCommand(showCommand)
+	RootCmd.AddCommand(tagCommand)
 }
