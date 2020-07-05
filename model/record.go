@@ -10,6 +10,19 @@ import (
 // RecordStatus Status of one record
 type RecordStatus int
 
+// RecordTag Tag of one record, contains tag name and tag value.
+type RecordTag map[string]string
+
+// NewRecordTag Create a new RecordTag instance.
+func NewRecordTag() RecordTag {
+	return make(RecordTag)
+}
+
+// AddTag Add a new tag.
+func (tag *RecordTag) AddTag(name string, value string) {
+	(*tag)[name] = value
+}
+
 const (
 	// Done Represent the record is finished.
 	Done RecordStatus = iota
@@ -22,6 +35,7 @@ type Record struct {
 	Status      RecordStatus
 	Detail      string
 	CreatedTime time.Time
+	Tag         RecordTag
 }
 
 // NewDoingRecord Factory method for creating one new doing record.
@@ -30,6 +44,7 @@ func NewDoingRecord(detail string) Record {
 		Status:      Doing,
 		Detail:      detail,
 		CreatedTime: time.Now(),
+		Tag:         NewRecordTag(),
 	}
 }
 
@@ -39,6 +54,7 @@ func NewDoneRecord(detail string) Record {
 		Status:      Done,
 		Detail:      detail,
 		CreatedTime: time.Now(),
+		Tag:         NewRecordTag(),
 	}
 }
 
@@ -49,7 +65,15 @@ func (record *Record) ToTaskPaper() string {
 	if record.Status == Done {
 		result += " @done"
 	}
+	for tag, value := range record.Tag {
+		result += fmt.Sprintf(" @%s(%s)", tag, value)
+	}
 	return result
+}
+
+// AddTag Add a tag to the provided record.
+func (record *Record) AddTag(name string, value string) {
+	record.Tag.AddTag(name, value)
 }
 
 // ParseTags Parse provided tag information and return tag's name and value
@@ -71,6 +95,7 @@ func ParseTags(text string) (string, string, error) {
 func FromTaskPaper(text string) (Record, error) {
 	record := Record{
 		Status: Doing,
+		Tag:    make(RecordTag),
 	}
 	regex := regexp.MustCompile(`((@[^()\s]+(\([^()]+\))?\s*))+$`)
 	find := regex.FindIndex([]byte(text))
@@ -97,6 +122,8 @@ func FromTaskPaper(text string) (Record, error) {
 			}
 			record.CreatedTime = t
 			continue
+		} else {
+			record.AddTag(tag, value)
 		}
 	}
 	return record, nil
