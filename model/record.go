@@ -76,6 +76,55 @@ func (record *Record) AddTag(name string, value string) {
 	record.Tag.AddTag(name, value)
 }
 
+// AddTagFromRawString Based on provided string to genearte a tag.
+// The provided text should be either in format "tag=value" or "tag".
+func (record *Record) AddTagFromRawString(text string) error {
+	nameAndValue := strings.Split(text, "=")
+	if len(nameAndValue) == 1 {
+		record.AddTag(nameAndValue[0], "")
+	} else if len(nameAndValue) == 2 {
+		record.AddTag(nameAndValue[0], nameAndValue[1])
+	} else {
+		return fmt.Errorf("Failed to find tag information for %s", text)
+	}
+	return nil
+}
+
+// AddTagFromRawStringList Based on a list of string to generate tags.
+func (record *Record) AddTagFromRawStringList(text []string) error {
+	for _, t := range text {
+		err := record.AddTagFromRawString(t)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+// RemoveTag Remove a tag from the tag name.
+func (record *Record) RemoveTag(name string) {
+	_, ok := record.Tag[name]
+	if !ok {
+		return
+	}
+	delete(record.Tag, name)
+	return
+}
+
+//RemoveTagFromRawString Remove a tag based on provided text.
+// The provided text should be either in format "tag=value" or "tag".
+func (record *Record) RemoveTagFromRawString(text string) {
+	nameAndValue := strings.Split(text, "=")
+	name := nameAndValue[0]
+	record.RemoveTag(name)
+}
+
+// RemoveTagsFromRawStringList Remove tags based on a string list.
+func (record *Record) RemoveTagsFromRawStringList(text []string) {
+	for _, t := range text {
+		record.RemoveTagFromRawString(t)
+	}
+}
+
 // ParseTags Parse provided tag information and return tag's name and value
 func ParseTags(text string) (string, string, error) {
 	trimtedText := strings.Trim(text, " ")
