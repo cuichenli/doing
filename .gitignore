@@ -2,3 +2,4 @@
 *.coverprofile
 bin/
 cover.out
+cover.html
