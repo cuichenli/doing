@@ -44,4 +44,27 @@ var _ = Describe("RecordList", func() {
 		})
 	})
 
+	Context("RecordList.EditRecords", func() {
+		It("Should edit every records by reference", func() {
+			var (
+				first  = CreateDummyRecord("first")
+				second = CreateDummyRecord("second")
+				third  = CreateDummyRecord("third")
+			)
+			recordList := model.NewRecordList()
+			recordList.AddRecord(first)
+			recordList.AddRecord(second)
+			recordList.AddRecord(third)
+
+			recordList.EditRecords(0, 3, func(record *model.Record) error {
+				record.Done()
+				return nil
+			})
+
+			for _, record := range recordList.Records {
+				Expect(record.Status).To(Equal(model.Done))
+			}
+		})
+	})
+
 })

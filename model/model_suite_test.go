@@ -28,6 +28,7 @@ func CreateDummyRecord(detail string) model.Record {
 		Status:      model.Doing,
 		CreatedTime: time.Date(2015, 04, 03, 12, 20, 07, 27, loc),
 		Detail:      detail,
+		Tag:         model.NewRecordTag(),
 	}
 	return dummyRecord
 }

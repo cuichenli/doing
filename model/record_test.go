@@ -130,4 +130,38 @@ var _ = Describe("Record", func() {
 		})
 
 	})
+
+	Context("Record.AddTagFromRawString", func() {
+		It("Should add tag value pair to the record based on a string", func() {
+			record := CreateDummyRecord("A record")
+			record.AddTagFromRawString("tag=value")
+			Expect(record.Tag["tag"]).To(Equal("value"))
+		})
+
+		It("Should add tag without value to the record based on a string", func() {
+			record := CreateDummyRecord("A record")
+			record.AddTagFromRawString("tag")
+			Expect(record.Tag["tag"]).To(Equal(""))
+		})
+	})
+
+	Context("Record.RemoveTagFromRawString", func() {
+		It("Should remove tag to the record based on a string of tag value pair", func() {
+			record := CreateDummyRecord("A record")
+			record.Tag["tag"] = "v"
+			record.RemoveTagFromRawString("tag=value")
+			_, ok := record.Tag["tag"]
+			Expect(ok).To(Equal(false))
+		})
+
+		It("Should remove tag to the record based on a string of only tag", func() {
+			record := CreateDummyRecord("A record")
+			record.Tag["exist"] = "yes"
+			record.Tag["tag"] = "v"
+			record.RemoveTagFromRawString("tag")
+			_, ok := record.Tag["tag"]
+			Expect(ok).To(Equal(false))
+			Expect(record.Tag["exist"]).To(Equal("yes"))
+		})
+	})
 })
