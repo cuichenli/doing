@@ -15,3 +15,7 @@ build: bin/doing
 
 test:
 	go test $(testargs) $(common_args) ./...
+
+cover: testargs = -coverprofile cover.out
+cover: test
+	go tool cover -html=cover.out -o cover.html
