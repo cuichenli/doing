@@ -22,12 +22,12 @@ func TestModel(t *testing.T) {
 	ginkgo.RunSpecs(t, "Model Suite")
 }
 
-func CreateDummyRecord(detail string) model.Record {
+func CreateDummyRecord(title string) model.Record {
 	loc, _ := time.LoadLocation("UTC")
 	dummyRecord := model.Record{
 		Status:      model.Doing,
 		CreatedTime: time.Date(2015, 04, 03, 12, 20, 07, 27, loc),
-		Detail:      detail,
+		Title:       title,
 		Tag:         model.NewRecordTag(),
 	}
 	return dummyRecord

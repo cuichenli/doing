@@ -33,26 +33,26 @@ const (
 // Record A record of doing things.
 type Record struct {
 	Status      RecordStatus
-	Detail      string
+	Title       string
 	CreatedTime time.Time
 	Tag         RecordTag
 }
 
 // NewDoingRecord Factory method for creating one new doing record.
-func NewDoingRecord(detail string) Record {
+func NewDoingRecord(title string) Record {
 	return Record{
 		Status:      Doing,
-		Detail:      detail,
+		Title:       title,
 		CreatedTime: time.Now(),
 		Tag:         NewRecordTag(),
 	}
 }
 
 // NewDoneRecord Factory method for creating one new done record.
-func NewDoneRecord(detail string) Record {
+func NewDoneRecord(title string) Record {
 	return Record{
 		Status:      Done,
-		Detail:      detail,
+		Title:       title,
 		CreatedTime: time.Now(),
 		Tag:         NewRecordTag(),
 	}
@@ -61,7 +61,7 @@ func NewDoneRecord(detail string) Record {
 // ToTaskPaper Convert the record to a string that is compatible to
 // task paper syntax.
 func (record *Record) ToTaskPaper() string {
-	result := fmt.Sprintf("  - %s @created(%s)", record.Detail, record.CreatedTime.Format(time.RFC3339))
+	result := fmt.Sprintf("  - %s @created(%s)", record.Title, record.CreatedTime.Format(time.RFC3339))
 	if record.Status == Done {
 		result += " @done"
 	}
@@ -156,8 +156,8 @@ func FromTaskPaper(text string) (Record, error) {
 	if find == nil {
 		return record, fmt.Errorf("Failed to get tag of provided record: %s", text)
 	}
-	detail := text[0 : find[0]-1] //Remove the trailing empty space
-	record.Detail = detail
+	title := text[0 : find[0]-1] //Remove the trailing empty space
+	record.Title = title
 	tagsText := text[find[0]+1 : find[1]] // Skip the first "@"
 	tagTexts := strings.Split(tagsText, "@")
 	for _, tagText := range tagTexts {
@@ -191,5 +191,5 @@ func (record *Record) Done() {
 // ToDisplayString Conver one record to a string to be displayed.
 func (record *Record) ToDisplayString() string {
 	timeString := record.CreatedTime.Format("2006-01-02 15:04")
-	return fmt.Sprintf("| %s | %s", timeString, record.Detail)
+	return fmt.Sprintf("| %s | %s", timeString, record.Title)
 }

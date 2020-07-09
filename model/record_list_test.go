@@ -17,8 +17,8 @@ var _ = Describe("RecordList", func() {
 		})
 
 		It("Add one record to the recordList", func() {
-			const detail = "One Task"
-			dummyRecord := CreateDummyRecord(detail)
+			const title = "One Task"
+			dummyRecord := CreateDummyRecord(title)
 			dummyRecords = append(dummyRecords, dummyRecord)
 			recordList.AddRecord(dummyRecord)
 
