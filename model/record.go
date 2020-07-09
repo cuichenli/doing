@@ -66,7 +66,11 @@ func (record *Record) ToTaskPaper() string {
 		result += " @done"
 	}
 	for tag, value := range record.Tag {
-		result += fmt.Sprintf(" @%s(%s)", tag, value)
+		if value == "" {
+			result += fmt.Sprintf(" @%s", tag)
+		} else {
+			result += fmt.Sprintf(" @%s(%s)", tag, value)
+		}
 	}
 	return result
 }

@@ -33,11 +33,19 @@ var _ = Describe("Record", func() {
 			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done"))
 		})
 
-		It("Convert a record with tags to task paper string", func() {
+		It("Convert a record with one tag to task paper string", func() {
 			record.Done()
 			record.AddTag("name", "value")
 			result := record.ToTaskPaper()
 			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done @name(value)"))
+		})
+
+		It("Convert a record with tags to task paper string", func() {
+			record.Done()
+			record.AddTag("name", "value")
+			record.AddTag("tag1", "")
+			result := record.ToTaskPaper()
+			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done @name(value) @tag1"))
 		})
 	})
 
@@ -111,6 +119,18 @@ var _ = Describe("Record", func() {
 			Expect(len(record.Tag)).To(Equal(2))
 			Expect(record.Tag["tag"]).To(Equal("value"))
 			Expect(record.Tag["tag2"]).To(Equal("value2"))
+		})
+
+		It("Should parse task paper 'detail @done but not done @created(2015-04-03T12:20:07Z) @tag(value) @tag2(value2) @tag3'", func() {
+			record, err := model.FromTaskPaper("detail @done but not done @tag2(value2) @created(2015-04-03T12:20:07Z) @tag(value) @tag3")
+			Expect(record.Detail).To(Equal("detail @done but not done"))
+			Expect(record.CreatedTime).To(Equal(time.Date(2015, 04, 03, 12, 20, 07, 0, loc)))
+			Expect(err).To(BeNil())
+			Expect(record.Status).To(Equal(model.Doing))
+			Expect(len(record.Tag)).To(Equal(3))
+			Expect(record.Tag["tag"]).To(Equal("value"))
+			Expect(record.Tag["tag2"]).To(Equal("value2"))
+			Expect(record.Tag["tag3"]).To(Equal(""))
 		})
 
 		It("Should fail to parse task paper 'detail @done but not done @created(2015-04-03T12:20:07Z) no tag'", func() {
