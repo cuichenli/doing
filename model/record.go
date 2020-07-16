@@ -162,12 +162,14 @@ func FromTaskPaper(text string) (Record, error) {
 		Status: Doing,
 		Tag:    make(RecordTag),
 	}
+	lines := strings.Split(text, "\n")
+	firstLine := lines[0]
 	regex := regexp.MustCompile(`((@[^()\s]+(\([^()]+\))?\s*))+$`)
-	find := regex.FindIndex([]byte(text))
+	find := regex.FindIndex([]byte(firstLine))
 	if find == nil {
 		return record, fmt.Errorf("Failed to get tag of provided record: %s", text)
 	}
-	title := text[0 : find[0]-1] //Remove the trailing empty space
+	title := firstLine[0 : find[0]-1] //Remove the trailing empty space
 	record.Title = title
 	tagsText := text[find[0]+1 : find[1]] // Skip the first "@"
 	tagTexts := strings.Split(tagsText, "@")
@@ -190,6 +192,10 @@ func FromTaskPaper(text string) (Record, error) {
 		} else {
 			record.AddTag(tag, value)
 		}
+	}
+	if len(lines) > 0 {
+		details := strings.Join(lines[1:], "\n")
+		record.AddDetail(details)
 	}
 	return record, nil
 }

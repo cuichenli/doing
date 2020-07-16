@@ -155,6 +155,19 @@ var _ = Describe("Record", func() {
 			Expect(err).ToNot(BeNil())
 			// Expect(record.Status).To(Equal(model.Doing))
 		})
+
+		It("Should parse text with details to a record", func() {
+			record, err := model.FromTaskPaper(`title @done
+this is
+a
+detail`)
+			Expect(err).To(BeNil())
+			Expect(record.Detail).To(Equal(`this is
+a
+detail`))
+			Expect(record.Title).To(Equal("title"))
+			Expect(record.Status).To(Equal(model.Done))
+		})
 	})
 
 	Context("Record.ToDisplayString", func() {
