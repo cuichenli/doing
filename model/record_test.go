@@ -47,6 +47,21 @@ var _ = Describe("Record", func() {
 			result := record.ToTaskPaper()
 			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done @name(value) @tag1"))
 		})
+
+		It("Convert a record with detials to task paper string", func() {
+			record.Done()
+			record.AddDetail("this is a detail")
+			result := record.ToTaskPaper()
+			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done\nthis is a detail"))
+		})
+
+		It("Convert a record with tags and detials to task paper string", func() {
+			record.Done()
+			record.AddDetail("this is a detail")
+			record.AddTag("name", "value")
+			result := record.ToTaskPaper()
+			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done @name(value)\nthis is a detail"))
+		})
 	})
 
 	Context("ParseTags", func() {

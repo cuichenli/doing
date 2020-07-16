@@ -36,6 +36,7 @@ type Record struct {
 	Title       string
 	CreatedTime time.Time
 	Tag         RecordTag
+	Detail      string
 }
 
 // NewDoingRecord Factory method for creating one new doing record.
@@ -45,6 +46,7 @@ func NewDoingRecord(title string) Record {
 		Title:       title,
 		CreatedTime: time.Now(),
 		Tag:         NewRecordTag(),
+		Detail:      "",
 	}
 }
 
@@ -55,6 +57,7 @@ func NewDoneRecord(title string) Record {
 		Title:       title,
 		CreatedTime: time.Now(),
 		Tag:         NewRecordTag(),
+		Detail:      "",
 	}
 }
 
@@ -72,7 +75,15 @@ func (record *Record) ToTaskPaper() string {
 			result += fmt.Sprintf(" @%s(%s)", tag, value)
 		}
 	}
+	if record.Detail != "" {
+		result += fmt.Sprintln()
+		result += fmt.Sprintf(record.Detail)
+	}
 	return result
+}
+
+func (record *Record) AddDetail(detail string) {
+	record.Detail = detail
 }
 
 // AddTag Add a tag to the provided record.
