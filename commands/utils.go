@@ -31,33 +31,8 @@ func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) err
 		}
 		lines := make([]string, 0)
 		if editor {
-			homeDir, err := userHomeDir()
+			lines, err = getContentFromEditor()
 			if err != nil {
-				return err
-			}
-			tempFile, err := ioutil.TempFile(homeDir, "doing-temp*")
-			if err != nil {
-				return err
-			}
-			fileName := tempFile.Name()
-			tempFile.Close()
-			editorCommand := exec.Command("vim", fileName)
-			editorCommand.Stdin = os.Stdin
-			editorCommand.Stdout = os.Stdout
-			editorCommand.Run()
-			file, err := os.Open(fileName)
-			if err != nil {
-				return nil
-			}
-			defer func() {
-				file.Close()
-				os.Remove(fileName)
-			}()
-			scanner := bufio.NewScanner(file)
-			for scanner.Scan() {
-				lines = append(lines, scanner.Text())
-			}
-			if err = scanner.Err(); err != nil {
 				return err
 			}
 		} else {
@@ -76,6 +51,61 @@ func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) err
 		records.AddRecord(record)
 		return writeRecords(records)
 	}
+}
+
+func getContentFromEditor() ([]string, error) {
+	lines := make([]string, 0)
+	fileName, err := createTempFile()
+	if err != nil {
+		return lines, err
+	}
+	err = invokeEditorToWrite("vim", fileName)
+	if err != nil {
+		return lines, err
+	}
+	lines, err = readContentFromTempFileAndDelete(fileName)
+	return lines, err
+}
+
+func readContentFromTempFileAndDelete(fileName string) ([]string, error) {
+	lines := make([]string, 0)
+	file, err := os.Open(fileName)
+	if err != nil {
+		return lines, nil
+	}
+	defer func() {
+		file.Close()
+		os.Remove(fileName)
+	}()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err = scanner.Err(); err != nil {
+		return lines, err
+	}
+	return lines, nil
+}
+
+func createTempFile() (string, error) {
+	homeDir, err := userHomeDir()
+	if err != nil {
+		return "", err
+	}
+	tempFile, err := ioutil.TempFile(homeDir, "doing-temp*")
+	if err != nil {
+		return "", err
+	}
+	fileName := tempFile.Name()
+	tempFile.Close()
+	return fileName, nil
+}
+
+func invokeEditorToWrite(editor string, fileName string) error {
+	editorCommand := exec.Command(editor, fileName)
+	editorCommand.Stdin = os.Stdin
+	editorCommand.Stdout = os.Stdout
+	return editorCommand.Run()
 }
 
 func writeRecords(records model.RecordList) error {
