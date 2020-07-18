@@ -23,11 +23,15 @@ var logFaltal = log.Fatal
 func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		entry := args[0]
+		lines := strings.Split(entry, "\n")
 		records, err := getExistingRecords()
 		if err != nil {
 			return err
 		}
-		record := newDoingRecord(entry)
+		record := newDoingRecord(lines[0])
+		if len(lines) > 1 {
+			record.AddDetail(strings.Join(lines[1:], "\n"))
+		}
 		callback(&record)
 		records.AddRecord(record)
 		return writeRecords(records)
@@ -62,11 +66,29 @@ var getConfigFilePath = func() (string, error) {
 var getRecordsFromFile = func(reader io.Reader) (model.RecordList, error) {
 	scanner := bufio.NewScanner(reader)
 	recordList := model.NewRecordList()
+	lines := make([]string, 0)
 	for scanner.Scan() {
-		text := scanner.Text()
-		text = strings.TrimLeft(text, " -")
-		record, _ := model.FromTaskPaper(text)
+		line := scanner.Text()
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		lines = append(lines, scanner.Text())
+	}
+
+	for i := 0; i < len(lines); {
+		if !strings.HasPrefix(lines[i], "  -") {
+			return recordList, fmt.Errorf("Failed to read records")
+		}
+		j := i
+		for j < len(lines)-1 && !strings.HasPrefix(lines[j+1], "  -") {
+			j++
+		}
+		record, err := model.FromTaskPaper(strings.Join(lines[i:j+1], "\n"))
+		if err != nil {
+			return recordList, err
+		}
 		recordList.AddRecord(record)
+		i = j + 1
 	}
 
 	if err := scanner.Err(); err != nil {

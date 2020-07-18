@@ -148,10 +148,35 @@ func TestGetRecordsFromFile(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, `  - a doing record @created(2020-06-28T21:27:50+10:00)
-	- a done record @created(2020-06-28T21:29:52+10:00) @done`)
+  - a done record @created(2020-06-28T21:29:52+10:00) @done`)
 	records, err := getRecordsFromFile(&buf)
 	g.Expect(err).To(gomega.BeNil())
 	g.Expect(len(records.Records)).To(gomega.Equal(2))
+}
+
+func TestGetRecordsFromFileWithNotes(t *testing.T) {
+	g := gomega.NewGomegaWithT(t)
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, `  - a doing record @created(2020-06-28T21:27:50+10:00)
+  - a done record @created(2020-06-28T21:29:52+10:00) @done
+This is a note`)
+	records, err := getRecordsFromFile(&buf)
+	g.Expect(err).To(gomega.BeNil())
+	g.Expect(len(records.Records)).To(gomega.Equal(2))
+	g.Expect(records.Records[1].Detail).To(gomega.Equal("This is a note"))
+}
+
+func TestGetRecordsFromFileWithMoreNotes(t *testing.T) {
+	g := gomega.NewGomegaWithT(t)
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, `  - a doing record @created(2020-06-28T21:27:50+10:00)
+  - a done record @created(2020-06-28T21:29:52+10:00) @done
+This is a note
+  - another record @created(2020-06-28T21:29:52+10:00) @done`)
+	records, err := getRecordsFromFile(&buf)
+	g.Expect(err).To(gomega.BeNil())
+	g.Expect(len(records.Records)).To(gomega.Equal(3))
+	g.Expect(records.Records[1].Detail).To(gomega.Equal("This is a note"))
 }
 
 func TestGetExistingRecords(t *testing.T) {
