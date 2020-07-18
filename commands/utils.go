@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/cuichenli/doing/model"
@@ -22,8 +24,46 @@ var logFaltal = log.Fatal
 // The callback parameter takes one function to handle the record to be added.
 func genericAdd(callback func(*model.Record)) func(*cobra.Command, []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		entry := args[0]
-		lines := strings.Split(entry, "\n")
+
+		editor, err := cmd.Flags().GetBool("editor")
+		if err != nil {
+			return err
+		}
+		lines := make([]string, 0)
+		if editor {
+			homeDir, err := userHomeDir()
+			if err != nil {
+				return err
+			}
+			tempFile, err := ioutil.TempFile(homeDir, "doing-temp*")
+			if err != nil {
+				return err
+			}
+			fileName := tempFile.Name()
+			tempFile.Close()
+			editorCommand := exec.Command("vim", fileName)
+			editorCommand.Stdin = os.Stdin
+			editorCommand.Stdout = os.Stdout
+			editorCommand.Run()
+			file, err := os.Open(fileName)
+			if err != nil {
+				return nil
+			}
+			defer func() {
+				file.Close()
+				os.Remove(fileName)
+			}()
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				lines = append(lines, scanner.Text())
+			}
+			if err = scanner.Err(); err != nil {
+				return err
+			}
+		} else {
+			entry := args[0]
+			lines = strings.Split(entry, "\n")
+		}
 		records, err := getExistingRecords()
 		if err != nil {
 			return err
