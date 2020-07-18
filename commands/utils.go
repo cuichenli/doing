@@ -76,19 +76,22 @@ var getRecordsFromFile = func(reader io.Reader) (model.RecordList, error) {
 	}
 
 	for i := 0; i < len(lines); {
-		if !strings.HasPrefix(lines[i], "  -") {
+		if !strings.HasPrefix(lines[i], "  - ") {
 			return recordList, fmt.Errorf("Failed to read records")
 		}
-		j := i
-		for j < len(lines)-1 && !strings.HasPrefix(lines[j+1], "  -") {
+		recordTexts := make([]string, 0)
+		recordTexts = append(recordTexts, strings.TrimPrefix(lines[i], "  - "))
+		j := i + 1
+		for j < len(lines) && !strings.HasPrefix(lines[j], "  - ") {
+			recordTexts = append(recordTexts, lines[j])
 			j++
 		}
-		record, err := model.FromTaskPaper(strings.Join(lines[i:j+1], "\n"))
+		record, err := model.FromTaskPaper(strings.Join(recordTexts, "\n"))
 		if err != nil {
 			return recordList, err
 		}
 		recordList.AddRecord(record)
-		i = j + 1
+		i = j
 	}
 
 	if err := scanner.Err(); err != nil {

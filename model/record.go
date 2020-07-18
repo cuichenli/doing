@@ -208,5 +208,10 @@ func (record *Record) Done() {
 // ToDisplayString Conver one record to a string to be displayed.
 func (record *Record) ToDisplayString() string {
 	timeString := record.CreatedTime.Format("2006-01-02 15:04")
-	return fmt.Sprintf("| %s | %s", timeString, record.Title)
+	stringBuilder := strings.Builder{}
+	stringBuilder.WriteString(fmt.Sprintf("| %s | %s", timeString, record.Title))
+	if record.Detail != "" {
+		stringBuilder.WriteString(fmt.Sprintf("\n%s", record.Detail))
+	}
+	return stringBuilder.String()
 }
