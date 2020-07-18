@@ -10,7 +10,7 @@ ifeq ($(verbose),  true)
 	common_args += -v
 endif
 
-build: bin/doing
+build:
 	go build $(common_args) -o bin/doing github.com/cuichenli/doing/cmd/doing
 
 test:
