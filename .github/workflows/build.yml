@@ -25,6 +25,12 @@ jobs:
       
     - name: Test
       run: make test
+    
+    - name: Set release tag
+      id: get_tag
+      run: |
+        tag=$(${{ github.sha }} | cut -c1-8)
+        echo "::set-output name=tag::$tag"
       
     - name: Create a Release
       uses: actions/create-release@v1
@@ -32,8 +38,8 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha::8 }}
-        release_name: Release ${{ github.sha::8 }}
+        tag_name: ${{ steps.get_tag.outputs.tag }}
+        release_name: Release ${{steps.get_tag.outputs.tag}}
         prerelease: false
 
     - name: Upload Release Asset
