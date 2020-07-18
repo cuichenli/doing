@@ -1,9 +1,11 @@
 package model
 
 import (
+	"bytes"
 	"fmt"
 	"regexp"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -205,13 +207,18 @@ func (record *Record) Done() {
 	record.Status = Done
 }
 
+const DefaultTemplate = `| {{ .CreatedTime.Format "2006-01-02 15:04" }} | {{ .Title }} {{ if .Detail }} 
+  {{.Detail}} {{ end }}`
+
 // ToDisplayString Conver one record to a string to be displayed.
 func (record *Record) ToDisplayString() string {
-	timeString := record.CreatedTime.Format("2006-01-02 15:04")
-	stringBuilder := strings.Builder{}
-	stringBuilder.WriteString(fmt.Sprintf("| %s | %s", timeString, record.Title))
-	if record.Detail != "" {
-		stringBuilder.WriteString(fmt.Sprintf("\n%s", record.Detail))
+	tmplate, err := template.New("template").Parse(DefaultTemplate)
+	if err != nil {
+		fmt.Println("error")
+		fmt.Printf(err.Error())
+		return ""
 	}
-	return stringBuilder.String()
+	var buf bytes.Buffer
+	tmplate.Execute(&buf, record)
+	return buf.String()
 }
