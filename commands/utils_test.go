@@ -11,7 +11,6 @@ import (
 
 	"github.com/cuichenli/doing/model"
 	"github.com/onsi/gomega"
-	"github.com/spf13/cobra"
 )
 
 func TestAddDoingGetErrorWhenGetExistingRecords(t *testing.T) {
@@ -23,7 +22,7 @@ func TestAddDoingGetErrorWhenGetExistingRecords(t *testing.T) {
 	getExistingRecords = func() (model.RecordList, error) {
 		return model.NewRecordList(), errors.New("Error on GetExistingRecords")
 	}
-	err := add(&cobra.Command{}, []string{"record"})
+	err := add(addCommand, []string{"record"})
 	g.Expect(err.Error()).Should(gomega.Equal("Error on GetExistingRecords"))
 }
 
@@ -44,7 +43,7 @@ func TestAddDoingWhenFailedToOpenFile(t *testing.T) {
 	openFile = func(name string, flag int, perm os.FileMode) (*os.File, error) {
 		return &os.File{}, errors.New("Error on openning file")
 	}
-	err := add(&cobra.Command{}, []string{"record"})
+	err := add(addCommand, []string{"record"})
 	g.Expect(err.Error()).Should(gomega.Equal("Error on openning file"))
 	g.Expect(getExistingRecordsCount).To(gomega.Equal(1))
 }
@@ -73,7 +72,7 @@ func TestAddDoing(t *testing.T) {
 	openFile = func(name string, flag int, perm os.FileMode) (*os.File, error) {
 		return &os.File{}, nil
 	}
-	err := add(&cobra.Command{}, []string{"record"})
+	err := add(addCommand, []string{"record"})
 	g.Expect(err).To(gomega.BeNil())
 	g.Expect(strings.HasPrefix(buf.String(), "  - record @created(")).To(gomega.BeTrue())
 }
@@ -102,7 +101,7 @@ func TestAddDone(t *testing.T) {
 	openFile = func(name string, flag int, perm os.FileMode) (*os.File, error) {
 		return &os.File{}, nil
 	}
-	err := done(&cobra.Command{}, []string{"record"})
+	err := done(addCommand, []string{"record"})
 	g.Expect(err).To(gomega.BeNil())
 	output := buf.String()
 	g.Expect(strings.HasPrefix(output, "  - record @created(")).To(gomega.BeTrue())
