@@ -16,14 +16,18 @@ var showCommand = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		show(&records)
-		return nil
+		return show(&records)
 	},
 }
 
-var show = func(recordList *model.RecordList) {
+var show = func(recordList *model.RecordList) error {
 	records := recordList.GetAllRecords()
 	for _, record := range *records {
-		fmt.Println(record.ToDisplayString())
+		str, err := record.ToDisplayString()
+		if err != nil {
+			return err
+		}
+		fmt.Println(str)
 	}
+	return nil
 }
