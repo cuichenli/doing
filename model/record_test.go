@@ -46,7 +46,11 @@ var _ = Describe("Record", func() {
 			record.AddTag("name", "value")
 			record.AddTag("tag1", "")
 			result := record.ToTaskPaper()
-			Expect(result).To(Equal("  - A simple task @created(2015-04-03T12:20:07Z) @done @name(value) @tag1"))
+			parsedRecord, err := model.FromTaskPaper(result)
+			Expect(err).To(BeNil())
+			Expect(parsedRecord.Tag["name"]).To(Equal("value"))
+			Expect(parsedRecord.Tag["tag1"]).To(Equal(""))
+			Expect(len(parsedRecord.Tag)).To(Equal(2))
 		})
 
 		It("Convert a record with detials to task paper string", func() {
