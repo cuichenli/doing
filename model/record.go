@@ -207,8 +207,20 @@ func (record *Record) Done() {
 	record.Status = Done
 }
 
-const DefaultTemplate = `| {{ .CreatedTime.Format "2006-01-02 15:04" }} | {{ .Title }} {{ if .Detail }} 
-  {{.Detail}} {{ end }}`
+// PrependIndent Add indentation to every line of the string.
+func PrependIndent(input string, indentNumber int) string {
+	stringBuilder := strings.Builder{}
+	lines := strings.Split(input, "\n")
+	indent := strings.Repeat(" ", indentNumber)
+	for i, line := range lines {
+		stringBuilder.WriteString(fmt.Sprintf("%s%s", indent, line))
+		if i != len(lines)-1 {
+			stringBuilder.WriteString(fmt.Sprintln())
+		}
+	}
+	return stringBuilder.String()
+}
+
 
 // ToDisplayString Conver one record to a string to be displayed.
 func (record *Record) ToDisplayString() string {
