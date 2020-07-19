@@ -221,16 +221,20 @@ func PrependIndent(input string, indentNumber int) string {
 	return stringBuilder.String()
 }
 
+const defaultTemplate = `| {{ .CreatedTime.Format "2006-01-02 15:04" }} | {{ .Title }}{{ if .Detail }}
+{{ PrependIndent .Detail 21}}{{ end }}`
 
 // ToDisplayString Conver one record to a string to be displayed.
-func (record *Record) ToDisplayString() string {
-	tmplate, err := template.New("template").Parse(DefaultTemplate)
+func (record *Record) ToDisplayString() (string, error) {
+	tmplate := template.New("template").Funcs(template.FuncMap{
+		"PrependIndent": PrependIndent,
+	})
+	tmplate, err := tmplate.Parse(defaultTemplate)
+
 	if err != nil {
-		fmt.Println("error")
-		fmt.Printf(err.Error())
-		return ""
+		return "", err
 	}
 	var buf bytes.Buffer
 	tmplate.Execute(&buf, record)
-	return buf.String()
+	return buf.String(), nil
 }
