@@ -1,6 +1,7 @@
 package model_test
 
 import (
+	"strings"
 	"time"
 
 	"github.com/cuichenli/doing/model"
@@ -173,8 +174,28 @@ detail`))
 	Context("Record.ToDisplayString", func() {
 		It("Should create a string to be displayed", func() {
 			record := CreateDummyRecord("A record")
-			str := record.ToDisplayString()
+			str, err := record.ToDisplayString()
+			Expect(err).To(BeNil())
 			Expect(str).To(Equal("| 2015-04-03 12:20 | A record"))
+		})
+
+		It("Should create a string display record with notes", func() {
+			record := CreateDummyRecord("A record")
+			record.Detail = "This is detail"
+			str, err := record.ToDisplayString()
+			Expect(err).To(BeNil())
+			Expect(str).To(Equal("| 2015-04-03 12:20 | A record\n                     This is detail"))
+		})
+
+		It("Should create a string display record with notes with multipleline details", func() {
+			record := CreateDummyRecord("A record")
+			record.Detail = "This is detail\nOne more"
+			str, err := record.ToDisplayString()
+			Expect(err).To(BeNil())
+			Expect(str).To(Equal(strings.TrimSpace(`
+| 2015-04-03 12:20 | A record
+                     This is detail
+                     One more`)))
 		})
 
 	})
@@ -210,6 +231,14 @@ detail`))
 			_, ok := record.Tag["tag"]
 			Expect(ok).To(Equal(false))
 			Expect(record.Tag["exist"]).To(Equal("yes"))
+		})
+	})
+
+	Context("PrependIndent", func() {
+		It("Should predent 2 space to every line of the text", func() {
+			text := "line 1\nline 2\nline 3"
+			result := model.PrependIndent(text, 2)
+			Expect(result).To(Equal("  line 1\n  line 2\n  line 3"))
 		})
 	})
 })
